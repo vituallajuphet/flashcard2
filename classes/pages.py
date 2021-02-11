@@ -8,7 +8,7 @@ class Pages:
     self.index = index
     self.alldata = alldata
     self.num = index + 1
-    self.main_window = Tk(className="Folder {}".format(self.num))
+    self.main_window = Tk(className=self.alldata[self.index]["folder_name"])
     self.main_window.geometry("600x850")
     self.build()
 
@@ -18,7 +18,7 @@ class Pages:
     btn_frame.pack(expand=True, fill=BOTH)
 
     var = StringVar()
-    label = Label(btn_frame, text="Folder {}".format(self.num), relief=FLAT)
+    label = Label(btn_frame, text=self.alldata[self.index]["folder_name"], relief=FLAT)
     label.config(font=("Courier", 20))
     label.pack(fill=BOTH)
 
@@ -42,7 +42,7 @@ class Pages:
     row = 1
     btns = []
     i = 0;
-    for dt in self.alldata[self.index]:
+    for dt in self.alldata[self.index]["cards"]:
       btns.append(Button(self.folder_frame, text="Flashcard {}".format(i+1), command= lambda i = i: self.view_cards(i), padx=20))
       btns[i].grid(row=row, column=col, pady=(0, 5), padx=(0, 5))
       btns[i].config(width=9, font=17)

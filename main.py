@@ -39,7 +39,8 @@ class Main:
 		btns = []
 		i = 0;
 		for dta in self.data:
-			btns.append(Button(self.folder_frame, text="Folder {}".format(i+1), command= lambda i = i: self.view_cards(i), padx=20))
+    		
+			btns.append(Button(self.folder_frame, text=dta["folder_name"], command= lambda i = i: self.view_cards(i), padx=20))
 			btns[i].grid(row=row, column=col, pady=(0, 5), padx=(0, 5))
 			btns[i].config(width=10, font=17)
 			i += 1
