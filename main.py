@@ -1,6 +1,6 @@
 from tkinter import *
 from classes.my_data import MyData
-
+from tkinter import messagebox
 
 class Main:
 
@@ -23,7 +23,11 @@ class Main:
 		self.folder_frame = Frame(btn_frame, pady=(60), padx=5, bg="gray") 
 		self.folder_frame.pack(expand=True, fill=BOTH)
 
-		# label.pack(side=LEFT)
+
+		self.text_desc = Text(self.folder_frame, width=19, height=1)
+		self.text_desc.config(font=("Courier", 12))
+		self.text_desc.insert(1.0, "Folder name")
+		self.text_desc.place(x=250, y=-53)
 
 		btn_add = Button(self.folder_frame, text="+ Add Folder", command=self.create_folder, padx=20)
 		btn_add.place(x=460, y=-55)
@@ -42,7 +46,7 @@ class Main:
     		
 			btns.append(Button(self.folder_frame, text=dta["folder_name"], command= lambda i = i: self.view_cards(i), padx=20))
 			btns[i].grid(row=row, column=col, pady=(0, 5), padx=(0, 5))
-			btns[i].config(width=10, font=17)
+			btns[i].config(width=10, font=("courier", 11))
 			i += 1
 			col += 1
 			if col == 5:
@@ -54,13 +58,21 @@ class Main:
 		return self
 
 	def create_folder (self):
+		foldername = self.text_desc.get("1.0","end-1c")
+		if foldername == "":
+			messagebox.showerror("Error", "Fields must not be empty!")
+			return
 		self.remove_child_frame_elem()
 		dta = MyData()
-		self.data.append([])
+
+		self.data.append({
+			"folder_name": foldername,
+			"cards": []
+		})
 		dta.set_data(self.data)
 		self.data = dta.get_data()
 		self.build_folder()
-
+		self.text_desc.delete(1.0,"end")
 		return self
 
 
@@ -73,7 +85,7 @@ class Main:
 	def remove_child_frame_elem(self):
 		i = 0
 		for child in self.folder_frame.winfo_children():
-			if i == 0:
+			if i == 0 or i == 1:
 				i += 1 
 				continue
 			child.destroy()

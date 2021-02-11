@@ -13,7 +13,6 @@ class Pages:
     self.build()
 
   def build(self):
-    print("running...")
     btn_frame = Frame(self.main_window, pady=16)
     btn_frame.pack(expand=True, fill=BOTH)
 
@@ -29,6 +28,9 @@ class Pages:
 
     btn_add = Button(self.folder_frame, text="+ Add Flashcard", command=self.create_folder, padx=20)
     btn_add.place(x=400, y=-55)
+
+    btn_viewall = Button(self.folder_frame, text="View All", command=self.view_all, padx=20)
+    btn_viewall.place(x=200, y=-55)
 
     btn_back = Button(self.folder_frame, text="Back", command=self.back_home, padx=20)
     btn_back.place(x=20, y=-55)
@@ -59,7 +61,7 @@ class Pages:
   def create_folder (self):
     self.remove_child_frame_elem()
     obj = {"title":"", "content":""}
-    self.alldata[self.index].append(obj)
+    self.alldata[self.index]["cards"].append(obj)
     dta = MyData()
     dta.set_data(self.alldata)
     self.alldata = dta.get_data()
@@ -74,6 +76,11 @@ class Pages:
     viewcard = ViewCard(index, self.index, self.alldata)
     return self
 	
+  def view_all(self):
+    from classes.viewall import Viewall
+    self.main_window.destroy()
+    Viewall(self.index, self.alldata)
+
   def remove_child_frame_elem(self):
     i = 0
     for child in self.folder_frame.winfo_children():

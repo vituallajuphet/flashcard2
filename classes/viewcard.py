@@ -21,9 +21,9 @@ class ViewCard:
     btn_frame.pack(expand=True, fill=BOTH)
 
     var = StringVar()
-    label = Label(btn_frame, text="Flashcard {}".format(self.num), relief=FLAT)
-    label.config(font=("Courier", 20))
-    label.pack(fill=BOTH)    
+    self.label = Label(btn_frame, text="Flashcard {}".format(self.num), relief=FLAT)
+    self.label.config(font=("Courier", 20))
+    self.label.pack(fill=BOTH)    
 
     self.folder_frame = Frame(btn_frame, pady=(60), padx=5, bg="gray") 
     self.folder_frame.pack(expand=True, fill=BOTH)
@@ -47,19 +47,24 @@ class ViewCard:
     self.text_ans.config(font=("Courier", 16))
     # self.text_ans.place(x=20, y=30)
 
-    txtdata = self.alldata[self.folderindex][self.card_index]["content"]
-    answer = self.alldata[self.folderindex][self.card_index]["title"]
+    txtdata = self.alldata[self.folderindex]['cards'][self.card_index]["content"]
+    answer = self.alldata[self.folderindex]['cards'][self.card_index]["title"]
 
     self.set_text(txtdata, answer)
 
     btn_save = Button(self.folder_frame, text="Save / Update", command=self.save_card, padx=20)
     btn_save.place(x=20, y=600)
 
-    btn_switch = Button(self.folder_frame, text="Flip Card", command=self.switch_card, padx=20)
-    btn_switch.place(x=428, y=600)
+    self.btn_switch = Button(self.folder_frame, text="-->", command=self.switch_card, padx=20)
+    self.btn_switch.place(x=478, y=520)
+
+    btn_prev = Button(self.folder_frame, text="<", command=self.prev_page, padx=20)
+    btn_prev.place(x=210, y=600)
+
+    btn_next = Button(self.folder_frame, text=">", command=self.next_page, padx=20)
+    btn_next.place(x=290, y=600)  
 
     self.main_window.mainloop()
-    sleep(1000)
   
   def goto_notes(self):
     return self
@@ -70,6 +75,33 @@ class ViewCard:
     self.text_ans.delete(1.0,"end")
     self.text_ans.insert(1.0, answer)
 
+  def next_page(self):
+
+    if self.card_index == len(self.alldata[self.folderindex]["cards"]) - 1:
+      messagebox.showerror("Error", "There's no more card")
+      return
+    
+    self.card_index +=1
+    txtdata = self.alldata[self.folderindex]['cards'][self.card_index]["content"]
+    answer = self.alldata[self.folderindex]['cards'][self.card_index]["title"]
+    self.set_text(txtdata, answer)
+    self.shown_answer = True
+    self.switch_card()
+    self.label.config(text=("Flashcard {}".format(self.card_index + 1)))
+
+  def prev_page(self):
+    if self.card_index == 0:
+      messagebox.showerror("Error", "There's no more card")
+      return
+
+    self.card_index -=1
+    txtdata = self.alldata[self.folderindex]['cards'][self.card_index]["content"]
+    answer = self.alldata[self.folderindex]['cards'][self.card_index]["title"]
+    self.set_text(txtdata, answer)
+    self.shown_answer = True
+    self.switch_card()
+    self.label.config(text=("Flashcard {}".format(self.card_index + 1)))
+    
   def save_card(self):
     from classes.my_data import MyData
     txt = self.text_desc.get("1.0","end-1c")
@@ -83,7 +115,7 @@ class ViewCard:
       "content": txt
     }
 
-    self.alldata[self.folderindex][self.card_index] = the_data
+    self.alldata[self.folderindex]['cards'][self.card_index] = the_data
     mydata = MyData()
     mydata.set_data(self.alldata)
     messagebox.showinfo("Success", "Saved Successfully!")
@@ -99,12 +131,15 @@ class ViewCard:
       self.text_desc.pack()
       self.text_ans.pack_forget()
       self.label2.config(text="The Content")
+      self.btn_switch.config(text="-->")
     else:
       self.shown_answer = True
       self.text_desc.pack_forget() 
       # self.text_ans.place(x=20, y=30) 
       self.text_ans.pack()
       self.label2.config(text="The Answer")
+      self.btn_switch.config(text="<--")
+      
     return self
 
   def back_folder(self):
